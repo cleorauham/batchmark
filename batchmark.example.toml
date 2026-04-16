@@ -1,0 +1,31 @@
+# batchmark configuration file
+# Copy to batchmark.toml and adjust to your project.
+
+# Git branches to benchmark against each other
+branches = ["main", "feature/my-optimisation"]
+
+# Where to store raw results (created automatically)
+output_dir = "batchmark-results"
+
+# Number of un-timed warm-up runs before measurement
+warmup_iterations = 1
+
+# ---------------------------------------------------------------------------
+# Define one [[suites]] block per benchmark you want to run.
+# ---------------------------------------------------------------------------
+
+[[suites]]
+name = "sort-benchmark"
+command = "python benchmarks/bench_sort.py"
+# working_dir defaults to repo root
+iterations = 10
+
+[[suites]]
+name = "io-benchmark"
+command = "python benchmarks/bench_io.py --size large"
+working_dir = "benchmarks"
+iterations = 5
+
+# Pass extra environment variables to the benchmark process
+[suites.env]
+PYTHONHASHSEED = "0"
