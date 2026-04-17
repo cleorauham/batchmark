@@ -44,7 +44,10 @@ def load_archive(name: str, archive_dir: str = DEFAULT_ARCHIVE_DIR) -> dict:
     path = archive_path(name, archive_dir)
     if not path.exists():
         raise ArchiveError(f"Archive '{name}' not found at {path}")
-    return json.loads(path.read_text())
+    try:
+        return json.loads(path.read_text())
+    except json.JSONDecodeError as exc:
+        raise ArchiveError(f"Archive '{name}' contains invalid JSON: {exc}") from exc
 
 
 def list_archives(archive_dir: str = DEFAULT_ARCHIVE_DIR) -> List[ArchiveEntry]:
