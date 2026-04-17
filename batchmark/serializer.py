@@ -1,6 +1,7 @@
 """JSON serialization for benchmark reports."""
 from __future__ import annotations
 
+import json
 from typing import Any
 
 from batchmark.comparator import ComparisonReport, SuiteComparison
@@ -37,3 +38,16 @@ def report_to_dict(report: ComparisonReport) -> dict[str, Any]:
         "regressions": len(report.regressions()),
         "improvements": len(report.improvements()),
     }
+
+
+def report_to_json(report: ComparisonReport, indent: int = 2) -> str:
+    """Serialize a ComparisonReport to a JSON string.
+
+    Args:
+        report: The comparison report to serialize.
+        indent: Number of spaces for JSON indentation. Defaults to 2.
+
+    Returns:
+        A formatted JSON string representation of the report.
+    """
+    return json.dumps(report_to_dict(report), indent=indent)
