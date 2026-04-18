@@ -54,3 +54,13 @@ def test_delete_removes_file(store):
 
 def test_delete_missing_returns_false(store):
     assert delete_annotation(store, "nope", "main") is False
+
+
+def test_save_overwrites_existing(store):
+    """Saving an annotation for the same suite/branch should overwrite the previous one."""
+    save_annotation(store, _ann(note="original"))
+    save_annotation(store, _ann(note="updated"))
+    loaded = load_annotation(store, "bench_a", "main")
+    assert loaded.note == "updated"
+    # Ensure there is still only one entry for this suite/branch
+    assert len(list_annotations(store)) == 1
