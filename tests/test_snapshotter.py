@@ -74,3 +74,14 @@ def test_delete_removes_file(store):
 def test_delete_missing_raises(store):
     with pytest.raises(SnapshotError):
         delete_snapshot(store, "nope")
+
+
+def test_save_overwrites_existing(store):
+    """Saving a snapshot with the same name should overwrite without error."""
+    report = _make_report()
+    save_snapshot(store, "dup", report)
+    # Overwrite should not raise
+    save_snapshot(store, "dup", report)
+    # There should still be only one snapshot with that name
+    names = list_snapshots(store)
+    assert names.count("dup") == 1
