@@ -23,19 +23,23 @@ def _report(comparisons: dict) -> ComparisonReport:
     return r
 
 
-def test_diff_no_change():
+def _suite_comp(baseline_durations, candidate_durations):
+    """Helper to build a SuiteComparison mock from lists of durations."""
     comp = MagicMock(spec=SuiteComparison)
-    comp.baseline_results = [_result(1.0), _result(1.0)]
-    comp.candidate_results = [_result(1.0), _result(1.0)]
+    comp.baseline_results = [_result(d) for d in baseline_durations]
+    comp.candidate_results = [_result(d) for d in candidate_durations]
+    return comp
+
+
+def test_diff_no_change():
+    comp = _suite_comp([1.0, 1.0], [1.0, 1.0])
     diff = diff_reports(_report({"suite_a": comp}))
     assert len(diff.deltas) == 1
     assert diff.deltas[0].delta_pct == pytest.approx(0.0)
 
 
 def test_diff_regression():
-    comp = MagicMock(spec=SuiteComparison)
-    comp.baseline_results = [_result(1.0)]
-    comp.candidate_results = [_result(1.5)]
+    comp = _suite_comp([1.0], [1.5])
     diff = diff_reports(_report({"suite_b": comp}))
     assert diff.deltas[0].delta_pct == pytest.approx(50.0)
     assert len(diff.regressions) == 1
@@ -43,9 +47,7 @@ def test_diff_regression():
 
 
 def test_diff_improvement():
-    comp = MagicMock(spec=SuiteComparison)
-    comp.baseline_results = [_result(2.0)]
-    comp.candidate_results = [_result(1.0)]
+    comp = _suite_comp([2.0], [1.0])
     diff = diff_reports(_report({"suite_c": comp}))
     assert diff.deltas[0].delta_pct == pytest.approx(-50.0)
     assert len(diff.improvements) == 1
@@ -63,9 +65,7 @@ def test_diff_failed_results_excluded():
 
 
 def test_format_diff_contains_branches():
-    comp = MagicMock(spec=SuiteComparison)
-    comp.baseline_results = [_result(1.0)]
-    comp.candidate_results = [_result(0.8)]
+    comp = _suite_comp([1.0], [0.8])
     diff = diff_reports(_report({"suite_e": comp}))
     output = format_diff(diff)
     assert "main" in output
@@ -74,9 +74,7 @@ def test_format_diff_contains_branches():
 
 
 def test_format_diff_summary_line():
-    comp = MagicMock(spec=SuiteComparison)
-    comp.baseline_results = [_result(1.0)]
-    comp.candidate_results = [_result(2.0)]
+    comp = _suite_comp([1.0], [2.0])
     diff = diff_reports(_report({"suite_f": comp}))
     output = format_diff(diff)
     assert "Regressions: 1" in output
