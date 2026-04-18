@@ -30,7 +30,24 @@ def filter_report(
     only_improvements: bool = False,
     min_delta_pct: float = 0.0,
 ) -> ComparisonReport:
-    """Return a new ComparisonReport with comparisons filtered by criteria."""
+    """Return a new ComparisonReport with comparisons filtered by criteria.
+
+    Args:
+        report: The comparison report to filter.
+        only_regressions: If True, keep only comparisons where performance got worse
+            (positive delta_pct).
+        only_improvements: If True, keep only comparisons where performance improved
+            (negative delta_pct).
+        min_delta_pct: Minimum absolute percentage change to include. Comparisons
+            with a delta below this threshold are excluded.
+
+    Returns:
+        A new ComparisonReport containing only the comparisons that match the
+        specified criteria.
+
+    Raises:
+        ValueError: If both only_regressions and only_improvements are True.
+    """
     comparisons = report.comparisons
 
     if only_regressions and only_improvements:
