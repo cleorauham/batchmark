@@ -31,6 +31,16 @@ class ReportDiff:
     def improvements(self) -> List[SuiteDelta]:
         return [d for d in self.deltas if d.delta_pct is not None and d.delta_pct < 0]
 
+    @property
+    def unchanged(self) -> List[SuiteDelta]:
+        """Suites present in both branches with no measurable change (delta_pct == 0)."""
+        return [d for d in self.deltas if d.delta_pct is not None and d.delta_pct == 0]
+
+    @property
+    def missing(self) -> List[SuiteDelta]:
+        """Suites that appear in only one of the two branches."""
+        return [d for d in self.deltas if d.only_in_baseline or d.only_in_candidate]
+
 
 def _mean(values: List[float]) -> Optional[float]:
     if not values:
