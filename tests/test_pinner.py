@@ -52,6 +52,14 @@ def test_list_pins_returns_names(store):
     assert list_pins(store) == ["alpha", "beta"]
 
 
+def test_list_pins_sorted(store):
+    """Pins should be returned in alphabetical order regardless of insertion order."""
+    save_pin(store, "zebra", _result())
+    save_pin(store, "alpha", _result())
+    save_pin(store, "mango", _result())
+    assert list_pins(store) == ["alpha", "mango", "zebra"]
+
+
 def test_delete_pin(store):
     save_pin(store, "v1", _result())
     delete_pin(store, "v1")
