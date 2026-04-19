@@ -8,6 +8,15 @@ def _color(text: str, code: str) -> str:
     return f"\033[{code}m{text}\033[0m"
 
 
+def _verdict_color(verdict: str) -> str:
+    """Return a colored verdict string based on its value."""
+    if verdict.lower() in ("pass", "improved"):
+        return _color(verdict, "32")  # green
+    if verdict.lower() in ("fail", "regression"):
+        return _color(verdict, "31")  # red
+    return _color(verdict, "33")  # yellow for unknown/neutral
+
+
 def format_snapshot_list(names: list[str]) -> str:
     if not names:
         return _color("No snapshots found.", "33")
@@ -29,5 +38,5 @@ def format_snapshot_detail(entry: SnapshotEntry) -> str:
         for cmp in suites:
             suite = cmp.get("suite", "?")
             verdict = cmp.get("summary", {}).get("verdict", "")
-            lines.append(f"    - {suite}  [{verdict}]")
+            lines.append(f"    - {suite}  [{_verdict_color(verdict)}]")
     return "\n".join(lines)
