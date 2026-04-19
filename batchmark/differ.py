@@ -41,6 +41,14 @@ class ReportDiff:
         """Suites that appear in only one of the two branches."""
         return [d for d in self.deltas if d.only_in_baseline or d.only_in_candidate]
 
+    def top_regressions(self, n: int = 5) -> List[SuiteDelta]:
+        """Return the *n* worst regressions sorted by delta_pct descending."""
+        return sorted(self.regressions, key=lambda d: d.delta_pct, reverse=True)[:n]
+
+    def top_improvements(self, n: int = 5) -> List[SuiteDelta]:
+        """Return the *n* biggest improvements sorted by delta_pct ascending."""
+        return sorted(self.improvements, key=lambda d: d.delta_pct)[:n]
+
 
 def _mean(values: List[float]) -> Optional[float]:
     if not values:
