@@ -41,6 +41,11 @@ def test_schedule_invalid_parallel():
         schedule([_suite("a")], max_parallel=0)
 
 
+def test_schedule_invalid_parallel_negative():
+    with pytest.raises(SchedulerError):
+        schedule([_suite("a")], max_parallel=-5)
+
+
 def test_schedule_empty_suites():
     batches = schedule([], max_parallel=2)
     assert batches == []
@@ -55,3 +60,11 @@ def test_batch_index_increments():
     suites = [_suite(str(i)) for i in range(4)]
     batches = schedule(suites, max_parallel=2)
     assert [b.index for b in batches] == [0, 1]
+
+
+def test_schedule_total_suites_preserved():
+    """All suites appear exactly once across all batches after scheduling."""
+    suites = [_suite(str(i)) for i in range(7)]
+    batches = schedule(suites, max_parallel=3)
+    all_names = [name for batch in batches for name in suite_names(batch)]
+    assert sorted(all_names) == sorted(s.name for s in suites)
