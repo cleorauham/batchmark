@@ -31,9 +31,21 @@ class WatchdogReport:
     def has_alerts(self) -> bool:
         return bool(self.alerts)
 
+    def alerts_for_suite(self, suite: str) -> List[WatchdogAlert]:
+        """Return all alerts belonging to the given suite name."""
+        return [a for a in self.alerts if a.suite == suite]
+
 
 def evaluate(report: ComparisonReport, rules: List[WatchdogRule]) -> WatchdogReport:
-    """Check a ComparisonReport against watchdog rules and return alerts."""
+    """Check a ComparisonReport against watchdog rules and return alerts.
+
+    Args:
+        report: The comparison report produced by the comparator.
+        rules: A list of WatchdogRule objects defining per-suite thresholds.
+
+    Returns:
+        A WatchdogReport containing any threshold breaches found.
+    """
     rule_map: Dict[str, WatchdogRule] = {r.suite: r for r in rules}
     alerts: List[WatchdogAlert] = []
 
