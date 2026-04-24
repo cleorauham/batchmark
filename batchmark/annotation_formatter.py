@@ -9,6 +9,11 @@ def _color(text: str, code: str) -> str:
 
 
 def format_annotation_list(annotations: list[Annotation]) -> str:
+    """Return a formatted string listing all annotations.
+
+    Each entry shows the suite, branch, optional tags, and note.
+    Returns a warning string if the list is empty.
+    """
     if not annotations:
         return _color("No annotations stored.", "33")
     lines = [_color("Stored annotations:", "1")]
@@ -20,6 +25,7 @@ def format_annotation_list(annotations: list[Annotation]) -> str:
 
 
 def format_annotation_detail(a: Annotation) -> str:
+    """Return a detailed, labelled string for a single annotation."""
     lines = [
         f"{_color('Suite:', '1')}  {a.suite}",
         f"{_color('Branch:', '1')} {a.branch}",
@@ -28,3 +34,13 @@ def format_annotation_detail(a: Annotation) -> str:
     if a.tags:
         lines.append(f"{_color('Tags:', '1')}   {', '.join(a.tags)}")
     return "\n".join(lines)
+
+
+def format_annotation_count(annotations: list[Annotation]) -> str:
+    """Return a short summary line with the total annotation count.
+
+    Example output:  "3 annotation(s) stored."
+    """
+    n = len(annotations)
+    noun = "annotation" if n == 1 else "annotations"
+    return _color(f"{n} {noun} stored.", "1")
