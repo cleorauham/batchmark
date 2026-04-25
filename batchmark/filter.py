@@ -39,7 +39,7 @@ def filter_report(
         only_improvements: If True, keep only comparisons where performance improved
             (negative delta_pct).
         min_delta_pct: Minimum absolute percentage change to include. Comparisons
-            with a delta below this threshold are excluded.
+            with a delta below this threshold are excluded. Must be non-negative.
 
     Returns:
         A new ComparisonReport containing only the comparisons that match the
@@ -47,11 +47,15 @@ def filter_report(
 
     Raises:
         ValueError: If both only_regressions and only_improvements are True.
+        ValueError: If min_delta_pct is negative.
     """
-    comparisons = report.comparisons
-
     if only_regressions and only_improvements:
         raise ValueError("Cannot filter for both regressions and improvements simultaneously.")
+
+    if min_delta_pct < 0.0:
+        raise ValueError(f"min_delta_pct must be non-negative, got {min_delta_pct}.")
+
+    comparisons = report.comparisons
 
     if only_regressions:
         comparisons = [c for c in comparisons if c.delta_pct is not None and c.delta_pct > 0]
