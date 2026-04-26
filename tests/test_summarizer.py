@@ -71,6 +71,19 @@ def test_summary_counts():
     assert counts["unchanged"] == 1
 
 
+def test_summary_counts_missing():
+    """Ensure 'missing' verdict is counted correctly alongside other verdicts."""
+    rows = [
+        SuiteSummaryRow("a", 1.0, None, None, "missing"),
+        SuiteSummaryRow("b", 1.0, 0.5, -50.0, "improved"),
+        SuiteSummaryRow("c", 1.0, None, None, "missing"),
+    ]
+    counts = summary_counts(rows)
+    assert counts["missing"] == 2
+    assert counts["improved"] == 1
+    assert counts.get("regressed", 0) == 0
+
+
 def test_format_summary_contains_suite_name():
     rows = [SuiteSummaryRow("mybench", 1.0, 0.8, -20.0, "improved")]
     output = format_summary(rows, color=False)
