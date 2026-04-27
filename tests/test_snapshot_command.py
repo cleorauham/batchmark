@@ -73,3 +73,9 @@ def test_show_prints_detail(store, capsys):
     assert rc == 0
     out = capsys.readouterr().out
     assert "detail" in out
+
+
+def test_delete_missing_returns_1(store):
+    """Deleting a snapshot that does not exist should return exit code 1."""
+    rc = run_snapshot_command(_args("delete", name="nonexistent", store=store))
+    assert rc == 1
