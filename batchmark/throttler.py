@@ -37,6 +37,15 @@ class ThrottleReport:
             groups.setdefault(r.suite, []).append(r)
         return groups
 
+    def summary(self) -> str:
+        """Return a human-readable one-line summary of the report."""
+        total = self.total_kept + self.total_dropped
+        return (
+            f"{self.total_kept}/{total} results kept, "
+            f"{self.total_dropped} dropped "
+            f"({len(self.by_branch())} branch(es), {len(self.by_suite())} suite(s))"
+        )
+
 
 def throttle(
     results: Sequence[BenchmarkResult],
